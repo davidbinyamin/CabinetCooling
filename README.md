@@ -1,2 +1,2 @@
 # CabinetCooling
-cooling a media cabinet with arduino and pc case fans
+Media cabinet cooling system powered by Arduino 
