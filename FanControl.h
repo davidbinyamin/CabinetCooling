@@ -4,7 +4,7 @@
 
 class FanControl {
   public:
-    FanControl(const int pin, int smoothingCount, int minimumPwm=0);
+    FanControl(const int pin, int smoothingCount, int minimumPwm = 0, int minTemp = 27, int maxTemp = 40);
 	void init();
 	void startFans();
 	void stopFans();
@@ -15,6 +15,7 @@ class FanControl {
   private:
 	void pwm25kHzBegin();
 	void pwmDuty(byte ocrb);
+  bool FanControl::isInPhase(double temperature, int phase);
 
   int m_minDuty;
   int m_pin;
@@ -22,6 +23,9 @@ class FanControl {
 	int m_smoothCount;
 	int m_count;
 	int m_fansState = LOW;
+  int m_minTemp;
+  int m_maxTemp;
+  float m_tempInterval;
 
 };
 
