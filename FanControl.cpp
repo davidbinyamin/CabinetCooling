@@ -1,10 +1,14 @@
 #include "FanControl.h"
 
 
-FanControl::FanControl(const int pin, int smoothingCount, int minimumPwm=0)
+FanControl::FanControl(const int pin, int smoothingCount, int minimumPwm = 0, int minTemp = 27, int maxTemp = 40)
 {
-	m_pin = pin;
+  m_pin = pin;
 	m_smoothCount = smoothingCount;
+  m_maxTemp = maxTemp;
+  m_minTemp = minTemp;
+  m_tempInterval = (maxTemp - minTemp) / 6;
+ 
   if (minimumPwm <= 79 && minimumPwm >=0)
   {
     m_minDuty = minimumPwm;
@@ -35,25 +39,33 @@ void FanControl::stopFans()
 	digitalWrite(m_pin, m_fansState);
 }
 
+bool FanControl::isInPhase(double temperature, int phase)
+{
+  if ((temperature >= m_minTemp + (m_tempInterval * (phase - 1))) &&
+          (temperature < m_minTemp + (m_tempInterval * phase)))
+          return true;
+  return false;
+}
+
 void FanControl::updateFanDuty(double temperature)
 {
 	int newFanDutyPercentage = 0;
-
-    if (temperature < 27)
+ 
+    if (temperature < m_minTemp)
       newFanDutyPercentage = 0;
-    if (temperature >= 28.0 && temperature < 30.0)
+    if (isInPhase(temperature, 1))
       newFanDutyPercentage = 20;
-    if (temperature >= 30.0 && temperature < 32.0)
+    if (isInPhase(temperature, 2))
       newFanDutyPercentage = 30;
-    if (temperature >= 32.0 && temperature < 34.0)
+    if (isInPhase(temperature, 3))
       newFanDutyPercentage = 50;
-    if (temperature >= 34.0 && temperature < 37.0)
+    if (isInPhase(temperature, 4))
       newFanDutyPercentage = 70;
-    if (temperature >= 37.0 && temperature < 39.0)
+    if (isInPhase(temperature, 5))
       newFanDutyPercentage = 80;
-    if (temperature >= 39.0 && temperature < 40.0)
+    if (isInPhase(temperature, 6))
       newFanDutyPercentage = 90;
-    if (temperature >= 40.0)
+    if (temperature >= m_maxTemp)
       newFanDutyPercentage = 100;
 
     if (newFanDutyPercentage < m_fanDutyPercentage)
