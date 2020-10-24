@@ -20,16 +20,16 @@
 
 // Temperature Sensor definitions
 #define SENSOR_PIN             A5
-#define REFERENCE_RESISTANCE   6000
+#define REFERENCE_RESISTANCE   7500
 #define NOMINAL_RESISTANCE     100000
-#define NOMINAL_TEMPERATURE    25
+#define NOMINAL_TEMPERATURE    24
 #define B_VALUE                3950
 #define READINGS_NUMBER  10
 #define DELAY_TIME  20
 
 //---- Global variables and defines ----//
 NTC_Thermistor* thermistor = NULL;
-FanControl fans(FAN_CONTROL_PIN, 5);
+FanControl fans(FAN_CONTROL_PIN, 5, 0, 29, 42);
 
 LiquidCrystal lcd(LCD_PIN_RS,LCD_PIN_E,LCD_PIN_DB4,LCD_PIN_DB5,LCD_PIN_DB6,LCD_PIN_DB7);
 
